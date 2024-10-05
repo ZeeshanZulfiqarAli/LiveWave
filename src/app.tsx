@@ -3,10 +3,16 @@ import { FileRoutes } from "@solidjs/start/router";
 import { createEffect, Suspense } from "solid-js";
 import "./app.css";
 import { setGlobalStore } from "./store";
+import { socketSubs } from "./constants";
 
 export default function App() {
   createEffect(() => {
     const ws2 = new WebSocket("ws://localhost:3000/_ws");
+
+    ws2.onopen = () => {
+      ws2.send(socketSubs.userCount);
+    };
+
     setGlobalStore("ws", () => ws2);
   });
 

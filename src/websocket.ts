@@ -1,4 +1,5 @@
 import { defineWebSocket, eventHandler } from "vinxi/http";
+import { socketEmits, socketSubs } from "./constants";
 
 let users = 0;
 
@@ -9,35 +10,41 @@ export default eventHandler({
       console.log("ws opened");
       users += 1;
       peer.publish(
-        "user-count",
-        JSON.stringify({ eventname: "getUsers", users: users })
+        socketSubs.userCount,
+        JSON.stringify({
+          eventname: socketEmits.getUsers,
+          users: users,
+        })
       );
     },
 
     async message(peer, event) {
       console.log("ws message: ", event.text());
 
-      if (`${event}` === "user-count") {
-        console.log("SUBBING TO USER COUNT");
-        peer.subscribe("user-count");
-        return;
-      }
+      // SUBSCRIBE TO USER COUNT ON ALL CHANNELS
+      if (`${event}` === socketSubs.userCount)
+        return peer.subscribe(socketSubs.userCount);
 
-      if (`${event}` === "getUsers") {
-        console.log("GET USERS: ", users);
-        peer.send(JSON.stringify({ eventname: "getUsers", users: users }));
+      if (`${event}` === socketEmits.getUsers) {
+        peer.send(
+          JSON.stringify({
+            eventname: socketEmits.getUsers,
+            users: users,
+          })
+        );
         return;
       }
     },
 
     async close(peer, event) {
-      console.log("ws closed");
       if (users > 0) users -= 1;
-      console.log("CLOSE USERS: ", users);
+
       peer.publish(
-        "user-count",
-        JSON.stringify({ eventname: "getUsers", users: users })
+        socketSubs.userCount,
+        JSON.stringify({ eventname: socketEmits.getUsers, users: users })
       );
+
+      console.log("ws closed");
     },
   }),
 });

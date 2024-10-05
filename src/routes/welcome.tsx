@@ -1,6 +1,7 @@
 import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
+import { socketEmits, socketSubs } from "~/constants";
 import { appRoutes } from "~/constants/approutes";
 import { globalStore } from "~/store";
 
@@ -20,19 +21,15 @@ const WelcomePage = () => {
   createEffect(() => {
     if (!globalStore?.ws) return;
 
-    globalStore.ws.onopen = () => {
-      globalStore?.ws?.send("user-count");
-    };
-
     globalStore?.ws?.addEventListener("open", (event) => {
-      globalStore?.ws?.send("getUsers");
+      globalStore?.ws?.send(socketEmits.getUsers);
     });
 
     globalStore?.ws?.addEventListener("message", (event) => {
       console.log("SENT MSG:", JSON.parse(event.data) ?? event.data);
       console.log(event);
 
-      if (JSON.parse(event.data).eventname === "getUsers") {
+      if (JSON.parse(event.data).eventname === socketEmits.getUsers) {
         setUsers(JSON.parse(event.data).users);
       }
     });
