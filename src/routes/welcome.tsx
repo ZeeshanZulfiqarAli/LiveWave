@@ -1,11 +1,14 @@
 import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
-import { onMount } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
+import { socketEmits } from "~/constants";
 import { appRoutes } from "~/constants/approutes";
+import { globalStore } from "~/store";
 
 const WelcomePage = () => {
   let myButton: HTMLButtonElement;
   const navigate = useNavigate();
+  const [users, setUsers] = createSignal<number | null>(null);
 
   onMount(() => {
     animate(
@@ -13,6 +16,19 @@ const WelcomePage = () => {
       { scale: [0.8, 1, 0.8] },
       { duration: 2, repeat: Infinity, easing: "linear" }
     );
+  });
+
+  createEffect(() => {
+    console.log(globalStore.socketOpen);
+    if (!globalStore?.ws || globalStore.socketOpen !== true) return;
+
+    globalStore.ws.addEventListener("message", (event) => {
+      if (JSON.parse(event.data).eventname === socketEmits.getUsers) {
+        setUsers(JSON.parse(event.data).users);
+      }
+    });
+
+    globalStore.ws!.send(socketEmits.getUsers);
   });
 
   return (
@@ -33,9 +49,27 @@ const WelcomePage = () => {
             <p class="font-bold text-white text-3xl">Begin</p>
           </button>
 
-          <p class="text-white mt-2 text-center">Listeners: 0</p>
-          <p class="text-white mt-2 text-3xl text-center">🥲</p>
+          <Show when={users()}>
+            <p class="text-white mt-2 text-center">Listeners: {users()}</p>
+            <div class="text-white mt-2 text-5xl text-center">
+              <div class="animate-spin">🕺</div>
+              <div class="animate-bounce pt-3">🪩</div>
+            </div>
+          </Show>
+
+          <Show when={users() === 0}>
+            <p class="text-white mt-2 text-center">Listeners: {users()}</p>
+            <p class="text-white mt-2 text-3xl text-center">🥲</p>
+          </Show>
         </div>
+      </div>
+
+      <div
+        onClick={() => {
+          globalStore?.ws?.send("HELLO");
+        }}
+      >
+        Emit
       </div>
     </>
   );
