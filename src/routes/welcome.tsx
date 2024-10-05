@@ -1,6 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
-import { onMount } from "solid-js";
+import { createEffect, onMount } from "solid-js";
 import { appRoutes } from "~/constants/approutes";
 import { globalStore } from "~/store";
 
@@ -14,6 +14,24 @@ const WelcomePage = () => {
       { scale: [0.8, 1, 0.8] },
       { duration: 2, repeat: Infinity, easing: "linear" }
     );
+  });
+
+  createEffect(() => {
+    if (!globalStore?.ws) return;
+
+    globalStore?.ws?.addEventListener("open", (event) => {
+      globalStore?.ws?.send("Hello Server!");
+      globalStore?.ws?.send("getUsers");
+    });
+
+    globalStore?.ws?.addEventListener("message", (event) => {
+      console.log("SENT MSG:", event.data);
+      console.log(event);
+    });
+
+    if (globalStore?.ws?.readyState == globalStore?.ws?.OPEN) {
+      globalStore?.ws.send("getUsers");
+    }
   });
 
   return (
