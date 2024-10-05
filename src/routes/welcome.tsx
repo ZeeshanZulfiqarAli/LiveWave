@@ -1,12 +1,13 @@
 import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
-import { createEffect, onMount } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { appRoutes } from "~/constants/approutes";
 import { globalStore } from "~/store";
 
 const WelcomePage = () => {
   let myButton: HTMLButtonElement;
   const navigate = useNavigate();
+  const [users, setUsers] = createSignal<number | null>(null);
 
   onMount(() => {
     animate(
@@ -19,19 +20,22 @@ const WelcomePage = () => {
   createEffect(() => {
     if (!globalStore?.ws) return;
 
+    globalStore.ws.onopen = () => {
+      globalStore?.ws?.send("user-count");
+    };
+
     globalStore?.ws?.addEventListener("open", (event) => {
-      globalStore?.ws?.send("Hello Server!");
       globalStore?.ws?.send("getUsers");
     });
 
     globalStore?.ws?.addEventListener("message", (event) => {
-      console.log("SENT MSG:", event.data);
+      console.log("SENT MSG:", JSON.parse(event.data) ?? event.data);
       console.log(event);
-    });
 
-    if (globalStore?.ws?.readyState == globalStore?.ws?.OPEN) {
-      globalStore?.ws.send("getUsers");
-    }
+      if (JSON.parse(event.data).eventname === "getUsers") {
+        setUsers(JSON.parse(event.data).users);
+      }
+    });
   });
 
   return (
@@ -52,8 +56,18 @@ const WelcomePage = () => {
             <p class="font-bold text-white text-3xl">Begin</p>
           </button>
 
-          <p class="text-white mt-2 text-center">Listeners: 0</p>
-          <p class="text-white mt-2 text-3xl text-center">🥲</p>
+          <Show when={users()}>
+            <p class="text-white mt-2 text-center">Listeners: {users()}</p>
+            <div class="text-white mt-2 text-5xl text-center">
+              <div class="animate-spin">🕺</div>
+              <div class="animate-bounce pt-3">🪩</div>
+            </div>
+          </Show>
+
+          <Show when={users() === 0}>
+            <p class="text-white mt-2 text-center">Listeners: {users()}</p>
+            <p class="text-white mt-2 text-3xl text-center">🥲</p>
+          </Show>
         </div>
       </div>
 
