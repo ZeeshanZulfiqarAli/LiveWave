@@ -2,7 +2,7 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { createEffect, Suspense } from "solid-js";
 import "./app.css";
-import { setGlobalStore } from "./store/global";
+import { setGlobalStore } from "./store";
 
 export default function App() {
   createEffect(() => {

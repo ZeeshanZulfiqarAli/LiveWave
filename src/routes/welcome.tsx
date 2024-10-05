@@ -2,7 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
 import { onMount } from "solid-js";
 import { appRoutes } from "~/constants/approutes";
-import { globalStore } from "~/store/global";
+import { globalStore } from "~/store";
 
 const WelcomePage = () => {
   let myButton: HTMLButtonElement;
