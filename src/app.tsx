@@ -3,7 +3,7 @@ import { FileRoutes } from "@solidjs/start/router";
 import { createEffect, Suspense } from "solid-js";
 import "./app.css";
 import { setGlobalStore } from "./store";
-import { socketSubs } from "./constants";
+import { socketEmits, socketSubs } from "./constants";
 
 export default function App() {
   createEffect(() => {
@@ -13,7 +13,16 @@ export default function App() {
       ws2.send(socketSubs.userCount);
     };
 
-    setGlobalStore("ws", () => ws2);
+    ws2.addEventListener("open", (event) => {
+      ws2.send(socketEmits.getUsers);
+      setGlobalStore("socketOpen", true);
+    });
+
+    ws2.onclose = () => {
+      setGlobalStore("socketOpen", false);
+    };
+
+    setGlobalStore("ws", ws2);
   });
 
   return (
