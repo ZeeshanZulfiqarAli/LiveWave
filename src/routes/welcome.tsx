@@ -1,8 +1,11 @@
+import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
 import { onMount } from "solid-js";
+import { appRoutes } from "~/constants/approutes";
 
 const WelcomePage = () => {
   let myButton: HTMLButtonElement;
+  const navigate = useNavigate();
 
   onMount(() => {
     animate(
@@ -21,6 +24,10 @@ const WelcomePage = () => {
             class="border-2 px-6 py-2 rounded-md border-white bg-transparent"
             ref={(el) => {
               myButton = el;
+            }}
+            onClick={() => {
+              // CONDITION HERE MAYBE
+              navigate(appRoutes.prepareToParty);
             }}
           >
             <p class="font-bold text-white text-3xl">Begin</p>
