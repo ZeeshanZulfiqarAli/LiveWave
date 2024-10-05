@@ -13,9 +13,9 @@ export const avatarDropdownOptions: DropdownOptionsObjType[] = [
 ];
 
 export const userColorOptions: DropdownOptionsObjType[] = [
-  { label: "Red", value: "red" },
-  { label: "Blue", value: "blue" },
-  { label: "Green", value: "green" },
-  { label: "Yellow", value: "yellow" },
-  { label: "Pink", value: "pink" },
+  { label: "Red", value: "text-red-800" },
+  { label: "Blue", value: "text-blue-300" },
+  { label: "Green", value: "text-green-300" },
+  { label: "Yellow", value: "text-yellow-300" },
+  { label: "Pink", value: "text-pink-300" },
 ];

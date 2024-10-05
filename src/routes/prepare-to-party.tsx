@@ -57,6 +57,7 @@ const PrepareToPartyPage = () => {
             <Show when={!myUserStore.avatar}>
               <div class="bg-slate-200 min-w-48 min-h-48 rounded-full" />
             </Show>
+
             <Show when={myUserStore.avatar}>
               <img
                 class="object-fill w-48 h-48 rounded-full"
@@ -66,7 +67,10 @@ const PrepareToPartyPage = () => {
             </Show>
           </div>
 
-          <p class="font-extrabold text-center text-2xl mb-4">
+          <p
+            class="font-extrabold text-center text-2xl mb-4"
+            classList={{ [myUserStore.color]: !!myUserStore.color.length }}
+          >
             <Show when={myUserStore.username.length}>
               {myUserStore.username}
             </Show>
@@ -75,7 +79,7 @@ const PrepareToPartyPage = () => {
               {"<"}Unknown{">"}
             </Show>
           </p>
-          <button class="border-2 px-6 py-2 rounded-md border-white bg-transparent hover:animate-bounce w-1/2">
+          <button class="border-2 px-6 py-2 rounded-md border-white bg-transparent w-1/2">
             <p class="font-bold text-white text-3xl">Enter</p>
           </button>
         </div>
