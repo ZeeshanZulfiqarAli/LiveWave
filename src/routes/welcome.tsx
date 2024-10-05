@@ -2,6 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { animate } from "motion";
 import { onMount } from "solid-js";
 import { appRoutes } from "~/constants/approutes";
+import { globalStore } from "~/store/global";
 
 const WelcomePage = () => {
   let myButton: HTMLButtonElement;
@@ -36,6 +37,14 @@ const WelcomePage = () => {
           <p class="text-white mt-2 text-center">Listeners: 0</p>
           <p class="text-white mt-2 text-3xl text-center">🥲</p>
         </div>
+      </div>
+
+      <div
+        onClick={() => {
+          globalStore?.ws?.send("HELLO");
+        }}
+      >
+        Emit
       </div>
     </>
   );
