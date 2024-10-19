@@ -91,7 +91,7 @@ const PrepareToPartyPage = () => {
             </Show>
           </p>
           <button class="border-2 px-6 py-2 rounded-md border-white bg-transparent w-1/2">
-            <p class="font-bold text-white text-3xl">Enter</p>
+            <p class="font-bold text-white text-3xl">LETS GOOO 🪩</p>
           </button>
         </div>
       </div>
